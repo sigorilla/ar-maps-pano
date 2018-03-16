@@ -5,11 +5,11 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const ENTRY_POINTS = [
-    './src/app/index.js'
+    path.join(__dirname, './src/app/index.js')
 ];
 
 const JS_LOADERS = [
-    'babel?cacheDirectory'
+    'babel-loader?cacheDirectory'
 ];
 
 const PLUGINS = [];
@@ -50,13 +50,12 @@ module.exports = {
     // Bundle will be served at /bundle.js locally.
         filename: 'bundle.js',
         // Bundle will be built at ./src/media/js.
-        path: './build',
+        path: path.join(__dirname, './build'),
         publicPath: '/'
     },
     module: {
-        loaders: [
+        rules: [
             {
-                // JS.
                 exclude: /(node_modules|bower_components|vr-markup)/,
                 loaders: JS_LOADERS,
                 test: /\.js$/
@@ -73,14 +72,10 @@ module.exports = {
     },
     plugins: PLUGINS,
     resolve: {
-        extensions: ['', '.js', '.json'],
-        fallback: path.join(__dirname, 'node_modules'),
-        modulesDirectories: [
+        extensions: ['.js', '.json'],
+        modules: [
             'src',
             'node_modules'
         ]
-    },
-    resolveLoader: {
-        fallback: [path.join(__dirname, 'node_modules')]
     }
 };
