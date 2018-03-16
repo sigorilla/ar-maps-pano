@@ -10,12 +10,7 @@ class App extends React.Component {
         return (
             <Scene>
                 <Entity
-                    primitive="a-ocean"
-                    color="#92e2e2"
-                    width="25"
-                    depth="25"
-                    density="15"
-                    speed="2"
+                    primitive="a-grid"
                 />
             </Scene>
         );
