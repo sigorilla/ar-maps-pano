@@ -1,1 +1,1 @@
-export * from './cdn'
+export * from './cdn';
