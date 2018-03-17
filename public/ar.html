@@ -77,16 +77,16 @@
         <img id="city" src="assets/room.jpg">
         <img id="cubes" src="assets/room1.jpg">
         <img id="sechelt" src="assets/room2.jpg">
-        <img id="city-thumb" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-city.jpg">
-        <img id="cubes-thumb" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-cubes.jpg">
-        <img id="sechelt-thumb" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-sechelt.jpg">
+        <img id="city-thumb" src="assets/pin1.png">
+        <img id="cubes-thumb" src="assets/pin2.png">
+        <img id="sechelt-thumb" src="assets/pin3.png">
         <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
 
         <!-- Image link template to be reused. -->
         <script id="link" type="text/html">
             <a-entity class="link"
-                      geometry="primitive: plane; height: 1; width: 1"
-                      material="shader: flat; src: ${thumb}"
+                      geometry="primitive: plane; height: 2; width: 2"
+                      material="shader: flat; src: ${thumb}; transparent: false; alphaTest: 0.5;"
                       event-set__1="_event: mousedown; scale: 1 1 1"
                       event-set__2="_event: mouseup; scale: 1.2 1.2 1"
                       event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
@@ -100,7 +100,7 @@
     <a-sky id="image-360" radius="10" visible="false"></a-sky>
 
     <!-- Image links. -->
-    <a-entity id="links" layout="type: line; margin: 1.5" position="0 -1 -4">
+    <a-entity id="links" layout="type: line; margin: 5.5" position="0 -1 -10">
         <a-entity template="src: #link" data-src="#cubes" data-thumb="#cubes-thumb"></a-entity>
         <a-entity template="src: #link" data-src="#city" data-thumb="#city-thumb"></a-entity>
         <a-entity template="src: #link" data-src="#sechelt" data-thumb="#sechelt-thumb"></a-entity>
