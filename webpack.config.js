@@ -5,7 +5,8 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const ENTRY_POINTS = [
-    path.join(__dirname, './src/app/index.js')
+    'index',
+    'chess'
 ];
 
 const JS_LOADERS = [
@@ -45,10 +46,13 @@ if (IS_PRODUCTION && process.env.MKT_ENV !== 'dev') {
 }
 
 module.exports = {
-    entry: ENTRY_POINTS,
+    entry: ENTRY_POINTS.reduce(
+        (result, name) => ({...result, [name]: path.join(__dirname, './src/app/', name + '.js')}),
+        {}
+    ),
     output: {
-    // Bundle will be served at /bundle.js locally.
-        filename: 'bundle.js',
+        // Bundle will be served at /bundle.js locally.
+        filename: '[name].js',
         // Bundle will be built at ./src/media/js.
         path: path.join(__dirname, './build'),
         publicPath: '/'
