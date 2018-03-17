@@ -3,6 +3,8 @@ import extras from 'aframe-extras';
 import {Scene, Entity} from 'aframe-react';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import Draughts from 'draughts';
+// import DraughtsBoard from 'draughtsboard';
 import 'components/threex-portal-door';
 import 'components/portal-door';
 
@@ -28,13 +30,14 @@ class Chess extends React.Component {
         super(props);
 
         this.state = {
+            game: new Draughts(),
             turn: 'white',
             move: null,
             board: ROWS.map((row, j) => {
                 const half = BOARD_SIZE / 2 - 1;
                 if (j === half || j === half + 1) {
                     return Array(BOARD_SIZE).fill().map((_, i) =>
-                        i % 2 === j % 2 ? CELLS.empty : CELLS.omit
+                        i % 2 !== j % 2 ? CELLS.empty : CELLS.omit
                     );
                 }
 

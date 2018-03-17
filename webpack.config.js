@@ -6,7 +6,8 @@ const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 const ENTRY_POINTS = [
     'index',
-    'chess'
+    'draughts',
+    'tic-tac-toe'
 ];
 
 const JS_LOADERS = [
