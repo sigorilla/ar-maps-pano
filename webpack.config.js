@@ -34,7 +34,8 @@ if (IS_PRODUCTION && process.env.MKT_ENV !== 'dev') {
             port: '4200',
             server: {
                 baseDir: ['public', 'build']
-            }
+            },
+            https: true
         })
     );
     PLUGINS.push(
