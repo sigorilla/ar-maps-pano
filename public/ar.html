@@ -3,9 +3,12 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta charset='UTF-8'>
-    <title>AR Shop</title>
+    <title>AR Maps</title>
 
     <script src='https://aframe.io/releases/0.7.1/aframe.min.js'></script>
+    <script src="https://unpkg.com/aframe-template-component@3.x.x/dist/aframe-template-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-layout-component@3.x.x/dist/aframe-layout-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-event-set-component@3.x.x/dist/aframe-event-set-component.min.js"></script>
     <script src='vendor/aframe-ar.min.js'></script>
 
     <style>
@@ -14,34 +17,25 @@
         }
 
         .header {
-            position: absolute;
-            color: white;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-content: center;
-            z-index: 110;
-        }
-
-        .header {
             left: 0;
             right: 0;
             top: 0;
-            height: 29px;
-            position: fixed;
+            height: 40px;
+            position: absolute;
             border-bottom: 1px solid rgba(0, 0, 0, 0.9);
             background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
         }
 
-        .header .text {
+        .header a {
             font-size: 14px;
             line-height: 30px;
             text-shadow: 0 1px 1px #555;
-            margin-left: 10px;
-        }
-
-        .header .text span {
-            color: red;
+            color: white;
+            text-decoration: none;
         }
 
         #loading {
@@ -71,18 +65,60 @@
 </head>
 <body style='margin: 0px; overflow: hidden;'>
 <div class='header' id="header">
-    <div class='text'><span>A</span>R Shop</div>
+    <a href="#" onClick="exitFromPanoramic()">выйти из панорамы</a>
 </div>
-<div id='loading'>loading...</div>
+<div id='loading'>загрузка...</div>
+<a-scene embedded
+         arjs='sourceType: webcam; debugUIEnabled: false'
+         vr-mode-ui='enabled: false'
+         id="scene"
+>
+    <a-assets>
+        <img id="city" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/city.jpg">
+        <img id="city-thumb" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-city.jpg">
+        <img id="cubes-thumb" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-cubes.jpg">
+        <img id="sechelt-thumb" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-sechelt.jpg">
+        <audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>
+        <img id="cubes" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/cubes.jpg">
+        <img id="sechelt" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/sechelt.jpg">
 
-<div id="overlay"></div>
-    <a-scene antialias='true'
-             embedded
-             arjs='trackingMethod: best; sourceType: webcam; debugUIEnabled: false'
-             vr-mode-ui='enabled: false'
-             id="scene"
-    >
-    <a-camera-static></a-camera-static>
+        <!-- Image link template to be reused. -->
+        <script id="link" type="text/html">
+            <a-entity class="link"
+                      geometry="primitive: plane; height: 1; width: 1"
+                      material="shader: flat; src: ${thumb}"
+                      event-set__1="_event: mousedown; scale: 1 1 1"
+                      event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+                      event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+                      event-set__4="_event: mouseleave; scale: 1 1 1"
+                      set-image="on: click; target: #image-360; src: ${src}"
+                      sound="on: click; src: #click-sound"></a-entity>
+        </script>
+    </a-assets>
+
+    <!-- 360-degree image. -->
+    <!--<a-sky id="image-360" radius="10" src="#city" visible="false"></a-sky>-->
+
+    <!-- 360-degree image. -->
+    <a-sky id="image-360" radius="10" visible="false"></a-sky>
+
+    <!-- Image links. -->
+    <a-entity id="links" layout="type: line; margin: 1.5" position="0 -1 -4">
+        <a-entity template="src: #link" data-src="#cubes" data-thumb="#cubes-thumb"></a-entity>
+        <a-entity template="src: #link" data-src="#city" data-thumb="#city-thumb"></a-entity>
+        <a-entity template="src: #link" data-src="#sechelt" data-thumb="#sechelt-thumb"></a-entity>
+    </a-entity>
+
+    <!-- Camera + cursor. -->
+    <a-camera>
+        <a-cursor id="cursor"
+                  animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
+                  animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
+                  event-set__1="_event: mouseenter; color: springgreen"
+                  event-set__2="_event: mouseleave; color: black"
+                  fuse="true"
+                  raycaster="objects: .link"></a-cursor>
+    </a-camera>
 </a-scene>
 
 <script>
@@ -92,21 +128,61 @@
         }, 1000);
     });
 
-    const marker = document.getElementById('marker');
-    let markerVisible = false;
-    // marker.addEventListener('marker-found', () => markerVisible = true);
-    // marker.addEventListener('marker-lost', () => markerVisible = false);
+    document.querySelector('#header').style.display = 'none';
 
-    const overlay = document.getElementById('overlay');
-    document.getElementById('scene').addEventListener('click', () => {
-        if (markerVisible) {
-            overlay.style.display = 'block';
-            // подождем, пока обновится overlay
-            requestAnimationFrame(() => {
-                if (confirm('Перейти к покупке?')) {
-                    window.open('https://events.yandex.ru/events/meetings/21-nov-2017/', '_blank');
-                }
-                overlay.style.display = 'none';
+    function exitFromPanoramic() {
+        document.querySelector('#image-360').setAttribute('visible', false);
+        document.querySelector('#links').setAttribute('visible', true);
+        document.getElementById('header').style.display = 'none';
+    }
+
+    AFRAME.registerComponent('set-image', {
+        schema: {
+            on: {type: 'string'},
+            target: {type: 'selector'},
+            src: {type: 'string'},
+            dur: {type: 'number', default: 300}
+        },
+
+        init: function () {
+            var data = this.data;
+            var el = this.el;
+
+            this.setupFadeAnimation();
+
+            el.addEventListener(data.on, function () {
+                // Fade out image.
+                data.target.emit('set-image-fade');
+                // Wait for fade to complete.
+                setTimeout(function () {
+                    // Set image.
+                    document.querySelector('#header').style.display = 'flex';
+                    data.target.setAttribute('visible', true);
+                    data.target.setAttribute('material', 'src', data.src);
+                    document.querySelector('#links').setAttribute('visible', false);
+                }, data.dur);
+            });
+        },
+
+        /**
+         * Setup fade-in + fade-out.
+         */
+        setupFadeAnimation: function () {
+            var data = this.data;
+            var targetEl = this.data.target;
+
+            // Only set up once.
+            if (targetEl.dataset.setImageFadeSetup) { return; }
+            targetEl.dataset.setImageFadeSetup = true;
+
+            // Create animation.
+            targetEl.setAttribute('animation__fade', {
+                property: 'material.color',
+                startEvents: 'set-image-fade',
+                dir: 'alternate',
+                dur: data.dur,
+                from: '#FFF',
+                to: '#000'
             });
         }
     });
