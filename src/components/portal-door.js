@@ -39,7 +39,9 @@ AFRAME.registerPrimitive(
             'arjs-portal-door': {}
         },
         mappings: {
-            url: 'arjs-portal-door.url'
+            url: 'arjs-portal-door.url',
+            doorWidth: 'arjs-portal-door.doorWidth',
+            doorHeight: 'arjs-portal-door.doorHeight'
         }
     })
 );
