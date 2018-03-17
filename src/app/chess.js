@@ -6,7 +6,9 @@ import ReactDOM from 'react-dom';
 import 'components/threex-portal-door';
 import 'components/portal-door';
 
-const ROWS = Array(10).fill().map((_, i) => i);
+const BOARD_SIZE = 8;
+
+const ROWS = Array(BOARD_SIZE).fill().map((_, i) => i);
 const COLS = ROWS.map((i) => String.fromCharCode(97 + i));
 
 const CELLS = {
@@ -29,8 +31,9 @@ class Chess extends React.Component {
             turn: 'white',
             move: null,
             board: ROWS.map((row, j) => {
-                if (j === 4 || j === 5) {
-                    return Array(10).fill().map((_, i) =>
+                const half = BOARD_SIZE / 2 - 1;
+                if (j === half || j === half + 1) {
+                    return Array(BOARD_SIZE).fill().map((_, i) =>
                         i % 2 === j % 2 ? CELLS.empty : CELLS.omit
                     );
                 }
